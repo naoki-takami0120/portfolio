@@ -12,7 +12,10 @@ Review what the user actually sees, not just the code. Requires the Playwright M
 
 ## Procedure
 1. For each viewport — 390x844 (mobile), 768x1024 (tablet), 1440x900 (desktop):
-   - Resize the browser, open the URL, take a full-page screenshot.
+   - Resize the browser and open the URL.
+   - Wait for `document.fonts.ready` before taking any screenshot, so fonts and styles are fully applied.
+   - Take a full-page screenshot.
+   - Also take a viewport screenshot of the first screen (above the fold), and a close-up screenshot of every section you flag.
    - Check `document.documentElement.scrollWidth > window.innerWidth` (horizontal overflow).
      If true, find the widest offending element and report its selector.
 2. Look at every screenshot and check:
