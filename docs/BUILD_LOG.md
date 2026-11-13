@@ -220,6 +220,17 @@ Screenshots: `docs/screenshots/review/after-*.png`
   Neither the Lighthouse score alone nor my visual check flagged this; the skill measured it.
   Screenshots: `docs/screenshots/review/mobile-390-hero-fallback-fonts.png` vs `mobile-390-hero-webfonts.png`.
 
+- **Fix attempt 1: `display: "optional"` on both fonts.** Lighthouse didn't change (its simulated throttling
+  loads fonts instantly from localhost, so the swap never happens there; it reported CLS 0 all along).
+  Re-checked with design-review under real slow-4G throttling: first-visit CLS **0.216 → 0** (3/3 runs).
+  But the review found a new problem: with `preload: false` + `optional`, the body font missed its ~100 ms window
+  even on a fast connection, so **first-time visitors never saw Source Serif 4**, and most portfolio visitors are first-time visitors.
+- **Fix attempt 2 (final): drop Source Serif 4 and use Georgia for body text.** It looks the same on every visit,
+  downloads nothing for body text, and the expanded Archivo headline keeps the visual identity
+  (preloaded, `display: "optional"`, so no layout shift).
+- **Final result:** Lighthouse mobile Performance **71 → 99**, A11y / BP / SEO 100. Preloaded fonts 3 → 1.
+  First-visit CLS 0 on slow 4G (measured by design-review).
+
 ## Takeaways
 
 _TODO — 3 bullets max. e.g. "Public skills cost +N min and fixed X a11y issues; my own review skill caught Y layout bugs they missed."_

@@ -1,19 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Source_Serif_4 } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
 const archivo = Archivo({
   subsets: ["latin"],
   axes: ["wdth"],
   variable: "--font-archivo",
-});
-
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  axes: ["opsz"],
-  style: ["normal", "italic"],
-  variable: "--font-source-serif",
-  preload: false,
+  display: "optional",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +20,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${archivo.variable} ${sourceSerif.variable} motion-safe:scroll-smooth`}>
+    <html lang="en" className={`${archivo.variable} motion-safe:scroll-smooth`}>
       <body className="min-h-full bg-fog font-serif text-cedar antialiased">{children}</body>
     </html>
   );
