@@ -1,19 +1,21 @@
 # Build Log — With vs. Without Claude Code Skills
 
-This portfolio was built twice from the same resume and the same section spec,
+This portfolio was built three times from the same resume and the same section spec,
 to measure what Claude Code **Skills** add to AI-assisted frontend work.
 
-| | v0 — Baseline (no skills) | v1 — With skills |
-|---|---|---|
-| Git ref | tag `v0-baseline` | branch `with-skills` |
-| Tool | Claude (cloud agent) | Claude Code Desktop |
-| Skills used | none | frontend-design → baseline-ui → fixing-accessibility (+ optional) |
-| Prompt | see below | see `docs/SKILL_PROMPT.md` |
-| Wall-clock time | **~3 min** (161 s, scaffold → passing build) | _TODO_ |
-| Human interventions | 0 | _TODO_ |
-| Files changed | 4 (`page.tsx`, `layout.tsx`, `globals.css`, `data/profile.ts`) | _TODO_ |
-| Lighthouse Performance / A11y / Best Practices / SEO | _TODO_ | _TODO_ |
-| Known issues | see below | _TODO_ |
+| | v0 — Baseline | v1 — Public skills | v2 — + Custom skill |
+|---|---|---|---|
+| Git ref | tag `v0-baseline` | branch `v1-public-skills` | branch `v2-custom-skill` |
+| Tool | Claude (cloud agent) | Claude Code Desktop | Claude Code Desktop |
+| Skills used | none | frontend-design, baseline-ui, fixing-accessibility, web-design-guidelines | v1 + `design-review` (my own, with Playwright MCP) |
+| Prompt | below | `docs/SKILL_PROMPT.md` | `docs/SKILL_PROMPT.md` |
+| Wall-clock time | **~3 min** (161 s, scaffold → passing build) | _TODO_ | _TODO_ |
+| Human interventions | 0 | _TODO_ | _TODO_ |
+| Files changed | 4 | _TODO_ | _TODO_ |
+| Guideline findings (web-design-guidelines) | — | _TODO_ found / _TODO_ fixed | — |
+| Design-review issues (before → after) | — | — | _TODO_ → _TODO_ |
+| Lighthouse mobile (Perf / A11y / BP / SEO) | _TODO_ | _TODO_ | _TODO_ |
+| Horizontal scroll at 390px | yes | _TODO_ | _TODO_ |
 
 ## v0 — Baseline
 
@@ -35,15 +37,27 @@ projects and testimonials may be placeholders. Stack: Next.js 16 + TypeScript + 
 
 Screenshots: `docs/screenshots/v0-desktop.png`, `docs/screenshots/v0-mobile.png`
 
-## v1 — With skills
+## v1 — Public skills
 
-_Fill in after running `docs/SKILL_PROMPT.md` in Claude Code._
+_Fill in after the v1 pass in `docs/SKILL_PROMPT.md`._
 
 - Start/end time:
 - Skills actually triggered (check Claude Code's transcript):
 - What each skill changed:
+- web-design-guidelines findings (fixed / not fixed):
 - Screenshots: `docs/screenshots/v1-desktop.png`, `docs/screenshots/v1-mobile.png`
+
+## v2 — Custom `design-review` skill
+
+_Fill in after the v2 pass._
+
+- Start/end time:
+- What I changed in the draft skill and why:
+- Review report before fixes:
+- Review report after fixes:
+- Issues the public skills missed but design-review caught:
+- Screenshots: `docs/screenshots/v2-desktop.png`, `docs/screenshots/v2-mobile.png`
 
 ## Takeaways
 
-_TODO — 3 bullets max. e.g. "Skills cost +N min but fixed X a11y issues and gave the site a distinct identity."_
+_TODO — 3 bullets max. e.g. "Public skills cost +N min and fixed X a11y issues; my own review skill caught Y layout bugs they missed."_
