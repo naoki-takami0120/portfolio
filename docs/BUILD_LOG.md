@@ -14,7 +14,7 @@ to measure what Claude Code **Skills** add to AI-assisted frontend work.
 | Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | _TODO_ |
 | Guideline findings (web-design-guidelines) | — | **17** found / **14** fixed | — |
 | Design-review issues (before → after) | — | — | _TODO_ → _TODO_ |
-| Lighthouse mobile (Perf / A11y / BP / SEO) | _TODO_ | _TODO_ | _TODO_ |
+| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | _TODO_ |
 | Horizontal scroll at 390px | yes | no | _TODO_ |
 
 ## v0 — Baseline
@@ -94,7 +94,14 @@ Line numbers refer to the file as audited (before the pass-4 fixes).
 ### Notes
 - Skill tension: frontend-design asked for sentence-case headings, and web-design-guidelines then flagged them (Title Case rule). The later pass won, which matches the section names in the brief.
 - Mobile check: headless Chrome can't go below 500px wide, so the 390px screenshot was rendered through a 390px iframe. No horizontal scroll was visible. That is a visual check, not a measured `scrollWidth`.
-- Still TODO by hand: Lighthouse (mobile), real testimonials, and project 3 + screenshots in `profile.ts`.
+- **Lighthouse (mobile, production build, incognito):** v0 82/95/100/100 → v1 71/100/100/100.
+  Accessibility +5, but Performance −11. Likely cause: the two web fonts chosen by frontend-design
+  (variable Archivo with a `wdth` axis + Source Serif 4 with `opsz` and italics). Three font files,
+  ~340 KB in total, are preloaded and delay the LCP headline on Lighthouse's throttled mobile profile.
+  v0 used system fonts. None of the four skills checked load performance.
+- The 390px screenshot artifact (cut-off left edge, magenta area) comes from the iframe workaround.
+  Checked by hand in Chrome DevTools (iPhone size): no horizontal scroll.
+- Still TODO by hand: real testimonials, and project 3 + screenshots in `profile.ts`.
 - Screenshots: `docs/screenshots/v1-desktop.png`, `docs/screenshots/v1-mobile.png`
 
 ## v2 — Custom `design-review` skill
