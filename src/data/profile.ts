@@ -7,7 +7,7 @@ export const profile = {
   role: "Backend Engineer (PHP / Laravel)",
   headline: "I build reliable, high-traffic backend systems with PHP & Laravel.",
   summary:
-    "9+ years building and operating web systems — including a game backend serving 2 million registered users. I've led a small development team in Canada and coordinated a 20-engineer offshore team in Vietnam.",
+    "9+ years building and operating web systems — including a game backend serving 2 million registered users. I’ve led a small development team in Canada and coordinated a 20-engineer offshore team in Vietnam.",
   status: "Canadian Permanent Resident — no sponsorship required.",
   email: "naoki.takami.0120@gmail.com",
   linkedin: "https://www.linkedin.com/in/naoki-takami/",

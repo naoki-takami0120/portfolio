@@ -22,11 +22,13 @@ git clone https://github.com/anthropics/skills.git /tmp/anthropic-skills
 mkdir -p ~/.claude/skills
 cp -r /tmp/anthropic-skills/skills/frontend-design ~/.claude/skills/
 
-# UI Skills
-npx ui-skills add baseline-ui
-npx ui-skills add fixing-accessibility
+# UI Skills (the `npx ui-skills add` form in the Qiita article no longer works)
+npx -y skills add ibelick/ui-skills --skill baseline-ui --agent claude-code
+npx -y skills add ibelick/ui-skills --skill fixing-accessibility --agent claude-code
 
-# Vercel web-design-guidelines (installs into .claude/skills of this project)
+# Vercel web-design-guidelines
+# (all three `skills add` commands install into .claude/skills of this project;
+#  answer "No" if asked to install find-skills)
 npx -y skills add vercel-labs/agent-skills --skill web-design-guidelines --agent claude-code
 ```
 
