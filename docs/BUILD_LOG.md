@@ -213,6 +213,13 @@ Screenshots: `docs/screenshots/review/after-*.png`
   (3 runs: 87 / 88 / 87, median 87). A11y / BP / SEO unchanged at 100.
 - **design-review v2.1:** added "wait for `document.fonts.ready`" and fold/close-up screenshots, based on the v2 run's own notes.
 
+- **design-review v2.1 run (report only, after the font change):** 0 Must / 1 Should / 5 Nice.
+  The Should-fix is new: on a first (uncached) mobile visit the web fonts swap in late and shift the layout,
+  **CLS 0.216** (good is ≤ 0.1). Archivo makes the hero headline wrap 4 → 5 lines (0.137), then
+  Source Serif 4 makes the summary 7 → 6 lines (0.078). Warm-cache loads measure CLS 0.
+  Neither the Lighthouse score alone nor my visual check flagged this; the skill measured it.
+  Screenshots: `docs/screenshots/review/mobile-390-hero-fallback-fonts.png` vs `mobile-390-hero-webfonts.png`.
+
 ## Takeaways
 
 _TODO — 3 bullets max. e.g. "Public skills cost +N min and fixed X a11y issues; my own review skill caught Y layout bugs they missed."_
