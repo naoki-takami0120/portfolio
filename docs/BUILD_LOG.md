@@ -200,6 +200,19 @@ Screenshots: `docs/screenshots/review/after-*.png`
 - **Dev server:** one was already running on :3000, so the review used it. The second `npm run dev` refused to start, as Next 16 allows one dev server per project.
 - Screenshots: `docs/screenshots/v2-desktop.png`, `docs/screenshots/v2-mobile.png`
 
+## v3 — Manual performance fix (no AI edits)
+
+- **Branch:** `v3-manual-perf` (on top of v2). Change made by hand after reading the Next.js 16 `next/font` docs.
+- **Diagnosis:** v1/v2 preloaded three font files (~340 KB): Archivo (headings) plus Source Serif 4 regular + italic (body).
+  On Lighthouse's throttled mobile profile this delayed the first render. The Next.js docs also advise using
+  multiple fonts conservatively, since each one is an extra download.
+- **Change:** `preload: false` on `Source_Serif_4` in `src/app/layout.tsx`. One line.
+  The heading font stays preloaded because the LCP element is the hero headline.
+  Body text renders in the fallback font first and swaps in (`display: 'swap'` is the default), so text is never hidden.
+- **Result:** preloaded fonts 3 → 1 (~340 KB → ~90 KB). Lighthouse mobile Performance **71 → 87**
+  (3 runs: 87 / 88 / 87, median 87). A11y / BP / SEO unchanged at 100.
+- **design-review v2.1:** added "wait for `document.fonts.ready`" and fold/close-up screenshots, based on the v2 run's own notes.
+
 ## Takeaways
 
 _TODO — 3 bullets max. e.g. "Public skills cost +N min and fixed X a11y issues; my own review skill caught Y layout bugs they missed."_

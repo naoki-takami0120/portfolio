@@ -13,6 +13,7 @@ const sourceSerif = Source_Serif_4({
   axes: ["opsz"],
   style: ["normal", "italic"],
   variable: "--font-source-serif",
+  preload: false,
 });
 
 export const metadata: Metadata = {
