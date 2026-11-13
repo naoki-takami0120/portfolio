@@ -16,6 +16,27 @@ const contacts = [
 
 const link = "text-harbour underline decoration-1 underline-offset-4 hover:text-harbour-deep hover:decoration-2";
 
+// Entries still marked "(TODO)" in profile.ts stay in the data but are never shown to visitors.
+const isDraft = (entry: object) =>
+  Object.values(entry).some((v) =>
+    typeof v === "string" ? v.includes("TODO") : Array.isArray(v) && v.some((x) => typeof x === "string" && x.includes("TODO")),
+  );
+const shownProjects = projects.filter((p) => !isDraft(p));
+const shownTestimonials = testimonials.filter((t) => !isDraft(t));
+
+// Keep hyphenated compounds ("high-traffic", "20-engineer") on one line.
+function keepCompounds(text: string) {
+  return text.split(/(\S+-\S+)/).map((part, i) =>
+    i % 2 ? (
+      <span key={i} className="whitespace-nowrap">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
 function Section({
   id,
   title,
@@ -33,12 +54,12 @@ function Section({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="grid scroll-mt-6 gap-6 border-t border-line py-16 md:grid-cols-4 md:gap-10 md:py-24"
+      className="grid scroll-mt-6 gap-6 border-t border-line py-16 md:py-24 lg:grid-cols-4 lg:gap-10"
     >
-      <h2 id={`${id}-title`} className="font-display text-2xl font-bold leading-tight font-stretch-expanded text-balance md:text-xl">
+      <h2 id={`${id}-title`} className="font-display text-2xl font-bold leading-tight font-stretch-expanded text-balance lg:text-xl">
         {title}
       </h2>
-      <div className="min-w-0 md:col-span-3">{children}</div>
+      <div className="min-w-0 lg:col-span-3">{children}</div>
     </section>
   );
 }
@@ -48,7 +69,7 @@ export default function Home() {
     <>
       <a
         href="#content"
-        className="sr-only rounded-sm bg-cedar px-4 py-3 font-display font-semibold text-mist focus-visible:not-sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4"
+        className="absolute left-4 top-4 z-10 rounded-sm bg-cedar px-4 py-3 font-display font-semibold text-mist not-focus-visible:sr-only"
       >
         Skip to Content
       </a>
@@ -83,18 +104,18 @@ export default function Home() {
             id="hero-title"
             className="max-w-5xl font-display text-4xl font-extrabold leading-none font-stretch-expanded text-balance sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            {profile.headline}
+            {keepCompounds(profile.headline)}
           </h1>
 
           <div className="mt-10 grid gap-10 md:mt-16 md:grid-cols-3 md:gap-16">
             <div className="max-w-prose md:col-span-2">
-              <p className="text-xl leading-relaxed text-pretty">{profile.summary}</p>
+              <p className="text-xl leading-relaxed text-pretty">{keepCompounds(profile.summary)}</p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 <a
                   href={`mailto:${profile.email}`}
                   className="inline-block rounded-sm bg-harbour px-5 py-3 font-display font-semibold text-mist hover:bg-harbour-deep active:bg-cedar"
                 >
-                  Email Naoki
+                  Email Me
                 </a>
                 <a href="#projects" className={`py-3 font-display font-semibold ${link}`}>
                   See Projects
@@ -118,9 +139,9 @@ export default function Home() {
         </section>
 
         {/* Projects */}
-        <Section id="projects" title="Projects" isEmpty={projects.length === 0}>
+        <Section id="projects" title="Projects" isEmpty={shownProjects.length === 0}>
           <div className="grid gap-16">
-            {projects.map((p, i) => (
+            {shownProjects.map((p, i) => (
               <article key={p.title} aria-labelledby={`project-${i}`} className="grid gap-6">
                 <div className="max-w-prose">
                   <h3 id={`project-${i}`} className="font-display text-2xl font-bold leading-tight font-stretch-semi-expanded text-balance">{p.title}</h3>
@@ -173,9 +194,9 @@ export default function Home() {
         </Section>
 
         {/* Testimonials */}
-        <Section id="testimonials" title="Testimonials" isEmpty={testimonials.length === 0}>
+        <Section id="testimonials" title="Testimonials" isEmpty={shownTestimonials.length === 0}>
           <div className="grid gap-12">
-            {testimonials.map((t, i) => (
+            {shownTestimonials.map((t, i) => (
               <figure key={i} className="max-w-prose">
                 <blockquote className="text-xl italic leading-relaxed text-pretty md:text-2xl">
                   <p>“{t.quote}”</p>
@@ -220,7 +241,7 @@ export default function Home() {
                   </p>
                   {h.points.map((pt) => (
                     <p key={pt} className="mt-2 leading-relaxed text-pretty">
-                      {pt}
+                      {keepCompounds(pt)}
                     </p>
                   ))}
                 </div>

@@ -9,13 +9,13 @@ to measure what Claude Code **Skills** add to AI-assisted frontend work.
 | Tool | Claude (cloud agent) | Claude Code Desktop | Claude Code Desktop |
 | Skills used | none | frontend-design, baseline-ui, fixing-accessibility, web-design-guidelines | v1 + `design-review` (my own, with Playwright MCP) |
 | Prompt | below | `docs/SKILL_PROMPT.md` | `docs/SKILL_PROMPT.md` |
-| Wall-clock time | **~3 min** (161 s, scaffold → passing build) | **~8 min** (17:55:48 → 18:03:22, 4 passes + build/lint) | _TODO_ |
-| Human interventions | 0 | 0 | _TODO_ |
-| Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | _TODO_ |
+| Wall-clock time | **~3 min** (161 s, scaffold → passing build) | **~8 min** (17:55:48 → 18:03:22, 4 passes + build/lint) | **~9 min** (13:00:23 → 13:09, review → fix → re-review + build/lint) |
+| Human interventions | 0 | 0 | 0 |
+| Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | 2 in `src/` (+ this log, 2 screenshots, review shots + reports) |
 | Guideline findings (web-design-guidelines) | — | **17** found / **14** fixed | — |
-| Design-review issues (before → after) | — | — | _TODO_ → _TODO_ |
-| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | _TODO_ |
-| Horizontal scroll at 390px | yes | no | _TODO_ |
+| Design-review issues (before → after) | — | — | **12** (1 Must / 7 Should / 4 Nice) → **4** (0 / 0 / 4 Nice) |
+| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | _not measured yet_ (run by hand, same setup as v0/v1) |
+| Horizontal scroll at 390px | yes | no | no (measured: `scrollWidth` 390 = `innerWidth` 390) |
 
 ## v0 — Baseline
 
@@ -106,13 +106,98 @@ Line numbers refer to the file as audited (before the pass-4 fixes).
 
 ## v2 — Custom `design-review` skill
 
-_Fill in after the v2 pass._
+- **Start/end time:** 2026-11-13 13:00:23 → 13:09 (~9 min, one prompt, no human input).
+- **What I changed in the draft skill and why:** added one check to step 2: *"Copy check: flag English that sounds unnatural or non-native, and suggest a more natural phrasing."* None of the public skills read the copy for naturalness. They check casing, quotes and person, not whether a sentence reads like native English.
+- **Files changed:** `src/app/page.tsx` (TODO filter, `keepCompounds()` helper, rail breakpoint `md` → `lg`, skip-link classes, CTA copy) and `src/data/profile.ts` (History order, one sentence reworded). No changes to `layout.tsx` or `globals.css`.
+- `npm run build` ✅ and `npm run lint` ✅ (both exit 0).
 
-- Start/end time:
-- What I changed in the draft skill and why:
-- Review report before fixes:
-- Review report after fixes:
-- Issues the public skills missed but design-review caught:
+### Fixes applied (1 Must + 7 Should)
+
+| # | Issue | Fix |
+|---|---|---|
+| M1 | "(TODO)" placeholders visible (project 3, 3 testimonials) | `isDraft()` filter in `page.tsx`: entries that still contain "TODO" stay in `profile.ts` but are not rendered. Testimonials section is hidden until it has a real entry. |
+| S1 | Headline breaks "high- / traffic" at 1440 | `keepCompounds()` wraps hyphenated words in `whitespace-nowrap` spans (headline, summary, History points) |
+| S2 | "20- / engineer" split at 1440 (hero) and 390 (History) | same helper |
+| S3 | Tablet: rail headings in a 146px column ("Languages / & / Technologies") | `Section` grid `md:grid-cols-4` → `lg:grid-cols-4`, so tablet stacks heading over full-width content |
+| S4 | Skip link had `padding: 0` when focused (`not-sr-only` reset `px-4 py-3`) | inverted: base styles always on, `not-focus-visible:sr-only` hides it |
+| S5 | History out of order (2020–2022 diploma below 2014–2017) | reordered `history` newest-first by start year |
+| S6 | CTA "Email Naoki" switches to third person | "Email Me" |
+| S7 | "Operated a game backend with 2M users; team leader and code reviewer." | "Ran a game backend for 2M users as team lead and code reviewer." |
+
+### Review report before fixes
+
+Screenshots: `docs/screenshots/review/before-*.png`
+
+```markdown
+## Design review — http://localhost:3000 — 2026-11-13 (before fixes)
+### Must fix
+- [all] Placeholder content visible to visitors — 7 leaf elements contain "TODO": `#projects article:nth-child(3)` ("Project Title (TODO)", "Short descriptor (TODO)", "Key metric (TODO)", description) and all 3 `#testimonials figure` ("Testimonial text goes here. (TODO)", "Colleague Name", "Role, Company") — `before-desktop-1440.png`, `before-tablet-768.png` — don't render entries that still contain "(TODO)"; hide the Testimonials section until it has real quotes.
+### Should fix
+- [desktop 1440] Headline breaks inside the compound "high-traffic" ("…reliable, high- / traffic backend") — `h1#hero-title`, `before-desktop-1440-fold.png` — keep hyphenated compounds on one line (`white-space: nowrap` span).
+- [desktop 1440, mobile 390] "20-engineer" splits across lines ("a 20- / engineer offshore team") in the hero summary (`#hero-title + div p`, `before-desktop-1440-fold.png`) and in History (`#history li:first-child`, 390px) — same fix as above.
+- [tablet 768] Rail section headings squeezed into a 146px column: "Languages & Technologies" wraps to 3 lines with "&" alone on the middle line, "What I Can Do" wraps to "What I / Can Do" — `section > h2` (width 146px, `md:grid-cols-4`), `before-tablet-768-skills.png` — use the side rail only from `lg` (≥1024px) and stack heading above content on tablet.
+- [all] Skip link renders with no padding when focused: text touches the focus ring (computed `padding: 0px`, 113×24px) because `focus-visible:not-sr-only` resets the `px-4 py-3` — `a[href="#content"]`, `before-focus-1-skiplink.png` — apply padding only in the focused state (`focus-visible:px-4 focus-visible:py-3`).
+- [all] History is out of chronological order: periods read 2023 → 2021 → 2017 → 2014 → **2020** → 2010 (the 2020–2022 diploma sits below 2014–2017) — `#history ol > li:nth-child(5)`, `before-desktop-1440.png` — sort entries newest-first by start year.
+- [all] Copy: CTA "Email Naoki" switches to third person on a page written in first person ("I build…", "I’ve led…", "I’m looking…") — `#content a[href^="mailto:"]` — "Email Me".
+- [all] Copy: "Operated a game backend with 2M users; team leader and code reviewer." mixes a sentence with a noun fragment and reads non-native — `#history li:nth-child(4) p` — "Ran a game backend for 2M users as team lead and code reviewer."
+### Nice to have
+- [all] Nav labels don't match section headings: "Services" → "What I Can Do", "Stack" → "Languages & Technologies" — `nav[aria-label=Sections] a` — align the wording.
+- [all] "Contact" is the only nav item in harbour blue + underline, so it can read as the current-page indicator — `nav a[href="#contact"]` — fine as a CTA, but consider a button-like style to make the intent explicit.
+- [all] Highlight panel "Improved maintainability" isn't a measurable result like its neighbours ("40% faster page load") — `#projects article:nth-child(2) ul` — replace with a metric or drop it.
+- [all] Copy: "DDD refactoring, jQuery → Vue.js migration (40% faster load), Ansible automation." is a list of fragments — `#history li:nth-child(3) p` — e.g. "Refactored apps with DDD, migrated jQuery to Vue.js (40% faster load) and automated provisioning with Ansible."
+### Passed
+- No horizontal overflow: `scrollWidth === innerWidth` at 390 (390), 768 (768), 1440 (1440).
+- First screen: name (header), headline, role/location/work status and CTA all visible above the fold at every width (`before-*-fold.png`).
+- Keyboard: Skip link → name → 5 nav links → Email CTA → See Projects all show a 2px harbour outline with 3px offset (`:focus-visible` matched for each).
+- Body text ≥16px everywhere, paragraphs capped by `max-w-prose`; contrast pairs from v1 (slate/fog 5.84, harbour/fog 6.13) unchanged.
+- Spacing: every section uses the same `py-16 md:py-24` and top rule.
+- Console: no app errors or warnings. One `WebSocket … /_next/hmr` ERR_CONNECTION_REFUSED came from the dev server's HMR socket during a reload (dev-only).
+- Reduced motion: with `prefers-reduced-motion: reduce`, `scroll-behavior` is `auto`, 0 running animations, 0 transitions.
+- Not counted: the round "N" badge bottom-left (overlapping "Vancouver, BC" at 390px) is the Next.js dev-tools indicator, not in production builds.
+```
+
+### Review report after fixes
+
+Screenshots: `docs/screenshots/review/after-*.png`
+
+```markdown
+## Design review — http://localhost:3000 — 2026-11-13 (after fixes)
+### Must fix
+- none
+### Should fix
+- none
+### Nice to have
+- [all] Nav labels don't match section headings: "Services" → "What I Can Do", "Stack" → "Languages & Technologies" — `nav[aria-label=Sections] a` — align the wording.
+- [all] "Contact" is the only nav item in harbour blue + underline, so it can read as the current-page indicator — `nav a[href="#contact"]` — consider a button-like style.
+- [all] Highlight panel "Improved maintainability" isn't a measurable result — `#projects article:nth-child(2) ul` — replace with a metric or drop it.
+- [all] Copy: "DDD refactoring, jQuery → Vue.js migration (40% faster load), Ansible automation." is a list of fragments — `#history li:nth-child(4) p` — e.g. "Refactored apps with DDD, migrated jQuery to Vue.js (40% faster load) and automated provisioning with Ansible."
+### Passed
+- No horizontal overflow: `scrollWidth === innerWidth` at 390, 768, 1440.
+- No "TODO" text in the rendered page (0 leaf elements). Project 3 and the Testimonials section are hidden until real content replaces the "(TODO)" placeholders in `profile.ts`.
+- Headline reads "I build reliable, / high-traffic backend / …" at 1440. Every `span.whitespace-nowrap` ("high-traffic", 2× "20-engineer") renders as 1 line box (`after-desktop-1440-fold.png`).
+- Tablet 768: all section `h2`s are full width (704px) and fit on 1 line. At 1024 (rail starts) they are 210px wide: "Languages & Technologies" wraps to 2 lines, the rest to 1.
+- Skip link when focused: padding 12px 16px, 145×48px, 2px ring clear of the text (`after-focus-1-skiplink.png`). When unfocused it collapses to 1×1 (sr-only).
+- History order: 2023 → 2021 → 2020 → 2017 → 2014 → 2010.
+- Copy: CTA is "Email Me". History reads "Ran a game backend for 2M users as team lead and code reviewer."
+- Keyboard: skip link → name → 5 nav links → Email Me → See Projects → contact email all match `:focus-visible` with a solid 2px outline.
+- Console: 0 errors, 0 warnings.
+- Reduced motion: `scroll-behavior: auto`, 0 animations.
+```
+
+### Issues the public skills missed but design-review caught
+- **Rendered line breaks:** "high- / traffic" in the headline and "20- / engineer" (twice). None of the public skills render the page, so they can't see where lines break.
+- **Tablet-only layout bug:** the 4-column rail at 768px squeezed headings to 146px. v1 only checked 390 and desktop.
+- **A broken fix from v1:** fixing-accessibility added the skip link, but `focus-visible:not-sr-only` zeroed its padding. The class list looked right in the code; only a focused screenshot showed the problem.
+- **Content order:** History mixed in education out of chronological order. That's a data problem, invisible to code-level rules.
+- **Voice and copy:** "Email Naoki" on a first-person page, and one non-native-sounding sentence. web-design-guidelines flagged first person as a problem (#15) instead.
+- **Overlap with v1:** visible TODOs were also flagged by web-design-guidelines (#16) but left unfixed. design-review rated them Must-fix, so they're hidden now, not invented.
+
+### Notes on the skill itself
+- **Race on first capture:** the very first 390px screenshot came out unstyled (system fonts, no CTA fill), while computed styles were correct. It was taken before CSS and fonts applied. Waiting on `document.fonts.ready` fixed it. Worth adding to step 1: "wait for `document.fonts.ready` before each screenshot".
+- **Full-page shots at 390px are ~6,300px tall** and get downscaled too far to inspect. Viewport and element screenshots (`-fold`, `-projects`, `-skills`) did the real work. Worth adding: "also take viewport shots of the fold and any section you flag".
+- **Real 390px:** Playwright's viewport goes down to 390px, so v1's iframe workaround (headless Chrome's 500px minimum) wasn't needed. Overflow is now a measured `scrollWidth`, not a visual guess.
+- **Dev-tools badge:** the round "N" badge (Next.js dev indicator) overlaps content at 390px in dev. It isn't in production, so it isn't counted.
+- **Dev server:** one was already running on :3000, so the review used it. The second `npm run dev` refused to start, as Next 16 allows one dev server per project.
 - Screenshots: `docs/screenshots/v2-desktop.png`, `docs/screenshots/v2-mobile.png`
 
 ## Takeaways

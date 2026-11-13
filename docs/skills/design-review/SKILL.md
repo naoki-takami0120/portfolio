@@ -20,6 +20,7 @@ Review what the user actually sees, not just the code. Requires the Playwright M
    - Spacing and alignment are consistent between sections.
    - Text is readable (size, line length, contrast against the background).
    - Nothing overlaps, is cut off, or looks unfinished (empty boxes, "TODO" visible to visitors).
+   - Copy check: flag English that sounds unnatural or non-native, and suggest a more natural phrasing.
 3. Keyboard: press Tab from the top of the page through the nav and the first CTA.
    Every focused element must have a visible focus indicator. Note the first one that doesn't.
 4. Read the browser console. Report errors and warnings.

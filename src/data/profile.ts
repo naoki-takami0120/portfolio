@@ -93,6 +93,7 @@ export type HistoryItem = {
   points: string[];
 };
 
+// Newest first, by start year (work and education interleaved).
 export const history: HistoryItem[] = [
   {
     period: "2023 – 2026",
@@ -109,6 +110,13 @@ export const history: HistoryItem[] = [
     points: ["Built custom WordPress themes and plugins for 10+ client sites; led a small dev team."],
   },
   {
+    period: "2020 – 2022",
+    title: "Diploma, Web and Mobile App Development (Co-op)",
+    org: "Cornerstone International Community College",
+    place: "Vancouver, Canada",
+    points: [],
+  },
+  {
     period: "2017 – 2021",
     title: "Web Developer (Self-employed)",
     org: "Freelance",
@@ -120,14 +128,7 @@ export const history: HistoryItem[] = [
     title: "Backend Developer",
     org: "CLINKS Inc.",
     place: "Japan",
-    points: ["Operated a game backend with 2M users; team leader and code reviewer."],
-  },
-  {
-    period: "2020 – 2022",
-    title: "Diploma, Web and Mobile App Development (Co-op)",
-    org: "Cornerstone International Community College",
-    place: "Vancouver, Canada",
-    points: [],
+    points: ["Ran a game backend for 2M users as team lead and code reviewer."],
   },
   {
     period: "2010 – 2014",
