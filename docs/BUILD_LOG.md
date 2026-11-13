@@ -14,7 +14,7 @@ to measure what Claude Code **Skills** add to AI-assisted frontend work.
 | Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | 2 in `src/` (+ this log, 2 screenshots, review shots + reports) |
 | Guideline findings (web-design-guidelines) | — | **17** found / **14** fixed | — |
 | Design-review issues (before → after) | — | — | **12** (1 Must / 7 Should / 4 Nice) → **4** (0 / 0 / 4 Nice) |
-| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | _not measured yet_ (run by hand, same setup as v0/v1) |
+| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | 71 / 100 / 100 / 100 (unchanged: design-review checks what is rendered, not load speed) |
 | Horizontal scroll at 390px | yes | no | no (measured: `scrollWidth` 390 = `innerWidth` 390) |
 
 ## v0 — Baseline
