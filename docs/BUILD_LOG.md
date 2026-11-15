@@ -72,7 +72,7 @@ Screenshots: `docs/screenshots/v0-desktop.png`, `docs/screenshots/v0-mobile.png`
 Line numbers refer to the file as audited (before the pass-4 fixes).
 
 | # | Location | Finding | Status |
-|---|---|---|---|---|
+|---|---|---|---|
 | 1 | `src/app/page.tsx:21` | Section anchors lack `scroll-margin-top` | fixed (`scroll-mt-6`) |
 | 2 | `src/app/page.tsx:39` | Skip link revealed with `:focus` instead of `:focus-visible` | fixed |
 | 3 | `src/app/page.tsx:41` | "Skip to content" not Title Case | fixed |
