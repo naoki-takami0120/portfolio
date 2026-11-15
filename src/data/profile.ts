@@ -1,13 +1,15 @@
 // Single source of truth for all site content.
 // Items marked `placeholder: true` (or containing "TODO") still need real content.
 
+import { Gauge, MonitorSmartphone, Server, Users, Workflow, Wrench, type LucideIcon } from "lucide-react";
+
 export const profile = {
   name: "Naoki Takami",
   location: "Vancouver, BC",
   role: "Backend Engineer (PHP / Laravel)",
   headline: "I build reliable, high-traffic backend systems with PHP & Laravel.",
   summary:
-    "9+ years building and operating web systems — including a game backend serving 2 million registered users. I’ve led a small development team in Canada and coordinated a 20-engineer offshore team in Vietnam.",
+    "9+ years building and operating web systems — including the backend of a mobile game that passed 2 million downloads in its first month. I’ve led a small development team in Canada and coordinated a 20-engineer offshore team in Vietnam.",
   status: "Canadian Permanent Resident — no sponsorship required.",
   email: "naoki.takami.0120@gmail.com",
   linkedin: "https://www.linkedin.com/in/naoki-takami/",
@@ -15,67 +17,119 @@ export const profile = {
 };
 
 export type Project = {
+  period: string; // e.g. "2021 – 2023 · Pace Creative" (shown above the title)
   title: string;
   subtitle: string;
   description: string;
   highlights: string[];
   skills: string[];
-  image?: string; // put screenshots in /public/projects/
+  image?: string; // put images in /public/projects/
+  imageAlt?: string; // describe the image if it carries information; leave empty if decorative
   link?: string;
   placeholder?: boolean;
 };
 
 export const projects: Project[] = [
+  // Newest first (left to right on desktop).
   {
+    period: "2021 – 2023 · Pace Creative",
+    title: "Client Websites at Pace Creative",
+    subtitle: "Custom WordPress themes & plugins for a Vancouver agency",
+    description:
+      "I developed and maintained custom WordPress themes and plugins in PHP for 10+ client websites, working with project managers and designers in English. I also led a small developer team, running team meetings and helping teammates solve technical problems.",
+    highlights: ["10+ client websites", "Custom themes & plugins", "Led a small dev team"],
+    skills: ["PHP", "WordPress", "JavaScript", "HTML/CSS"],
+    image: "/projects/pace-creative.svg",
+    imageAlt: "Pace Creative logo",
+  },
+  {
+    period: "2017 – 2021 · Freelance",
+    title: "Freelance Backend Projects",
+    subtitle: "Laravel + DDD rebuild · jQuery → Vue.js migration",
+    description:
+      "geechs job, a job site for freelance IT engineers: I joined the tech lead as a backend engineer to rebuild the site with Laravel and Domain-Driven Design, which made it easier to maintain and reduced bugs. An EPARK salon site: I replaced jQuery with Vue.js, starting with the slowest page, the top page, and cut its load time by 40%.",
+    highlights: ["40% faster page load", "Laravel + DDD rebuild", "Easier maintenance, fewer bugs"],
+    skills: ["PHP", "Laravel", "DDD", "Vue.js"],
+  },
+  {
+    period: "2014 – 2017 · CLINKS",
     title: "Sengoku Night Blood",
-    subtitle: "High-traffic social game backend",
+    subtitle: "Backend for a mobile game (iOS / Android)",
     description:
-      "Operated and optimized the backend of a social game with 2M registered users and 300K monthly active users.",
-    highlights: ["2M registered users", "300K MAU", "Redis/Memcached caching & DB sharding"],
-    skills: ["PHP", "MySQL", "Redis", "Memcached"],
-    placeholder: true,
+      "A free-to-play romance game from Marvelous, KADOKAWA and Otomate. I joined during pre-launch development and worked on its PHP backend through the May 2017 launch, using Redis/Memcached caching and database sharding so it could handle 2M downloads in under a month.",
+    highlights: ["2M downloads in under a month", "600K pre-registrations", "Redis/Memcached caching & DB sharding"],
+    skills: ["PHP", "MySQL", "Redis", "Memcached", "Shell scripts"],
+    image: "/projects/sengoku-night-blood.jpg",
   },
   {
-    title: "Job Search Platform Refactor",
-    subtitle: "Domain-Driven Design & Vue.js migration",
+    period: "2014 – 2017 · CLINKS",
+    title: "Dragon League X / A",
+    subtitle: "Backend for a real-time team battle game (iOS / Android)",
     description:
-      "Refactored a job search platform with DDD principles and replaced jQuery with Vue.js on the frontend.",
-    highlights: ["40% faster page load", "Improved maintainability"],
-    skills: ["PHP", "Vue.js", "DDD", "Ansible"],
-    placeholder: true,
-  },
-  {
-    title: "Project Title (TODO)",
-    subtitle: "Short descriptor (TODO)",
-    description: "One or two sentences describing the problem, your role, and the outcome. (TODO)",
-    highlights: ["Key metric (TODO)"],
-    skills: ["Laravel", "Vue.js"],
-    placeholder: true,
+      "The mobile versions of Asobism's real-time 5-vs-5 team battle RPG, whose original GREE version had 850K registered users. Every two weeks I added new battle skills through the backend API, fixed bugs, and took each release from testing to production. As team leader, I also reviewed the team's code.",
+    highlights: ["New battle skills every 2 weeks", "Testing to production deploys", "Team lead & code reviews"],
+    skills: ["PHP", "Backend API", "Shell scripts"],
+    image: "/projects/dragon-league.jpg",
+    imageAlt: "Dragon League X key art",
   },
 ];
 
-export const services = [
-  { title: "Backend APIs", description: "Designing and building REST APIs and web backends with Laravel and CakePHP." },
-  { title: "Performance & Scale", description: "Caching, query tuning and sharding for systems under heavy load." },
-  { title: "Refactoring Legacy Code", description: "Applying DDD to make large codebases maintainable and stable." },
-  { title: "Frontend Integration", description: "Vue.js and JavaScript frontends that work cleanly with the backend." },
-  { title: "Automation & DevOps", description: "Provisioning with Ansible, CI with Jenkins, scripted deployments." },
-  { title: "Team & Project Leadership", description: "Leading developers and coordinating offshore teams with Jira and Scrum." },
+export type Service = {
+  title: string;
+  description: string;
+  icon: LucideIcon; // decorative line icon from lucide-react (https://lucide.dev/icons)
+};
+
+export const services: Service[] = [
+  { title: "Backend APIs", icon: Server, description: "Designing and building REST APIs and web backends with Laravel and CakePHP." },
+  { title: "Performance & Scale", icon: Gauge, description: "Caching, query tuning and sharding for systems under heavy load." },
+  { title: "Refactoring Legacy Code", icon: Wrench, description: "Applying DDD to make large codebases maintainable and stable." },
+  { title: "Frontend Integration", icon: MonitorSmartphone, description: "Vue.js and JavaScript frontends that work cleanly with the backend." },
+  { title: "Automation & DevOps", icon: Workflow, description: "Provisioning with Ansible, CI with Jenkins, scripted deployments." },
+  { title: "Team & Project Leadership", icon: Users, description: "Leading developers and coordinating offshore teams with Jira and Scrum." },
 ];
 
 export type Testimonial = {
   quote: string;
   name: string;
-  role: string;
-  company: string;
+  role: string; // their current title
+  company: string; // where we worked together (shown as "Worked with me at …"), not their current employer
+  photo?: string; // e.g. "/testimonials/jane.jpg" (file in /public/testimonials/) — only with their permission
+  linkedin?: string; // their LinkedIn profile URL; links their name
   placeholder?: boolean;
 };
 
-// TODO: replace with the recommendations received on LinkedIn (get permission first).
+// In `quote`, wrap the key phrase in *asterisks* to show it in italics.
+
+// From LinkedIn recommendations (May 2023). Excerpts are verbatim; "…" marks omitted text.
 export const testimonials: Testimonial[] = [
-  { quote: "Testimonial text goes here. (TODO)", name: "Colleague Name", role: "Role", company: "Company", placeholder: true },
-  { quote: "Testimonial text goes here. (TODO)", name: "Colleague Name", role: "Role", company: "Company", placeholder: true },
-  { quote: "Testimonial text goes here. (TODO)", name: "Colleague Name", role: "Role", company: "Company", placeholder: true },
+  {
+    quote:
+      "Naoki is the kind of programmer that *any designer would be happy to work with*. … When he zeroes in on any problem or complication, he won't rest until he is able to solve it, aiming for a clean and elegant solution.",
+    name: "Jorge D. Gonzalez",
+    role: "Visual Designer",
+    company: "Pace Creative",
+    linkedin: "https://www.linkedin.com/in/jorge-d-gonzalez/",
+    photo: "/testimonials/jorge.jpeg",
+  },
+  {
+    quote:
+      "He consistently demonstrated strong technical skills and *a deep understanding of both front-end and back-end development*. He also possesses excellent communication skills, making it easy to work with him on any project.",
+    name: "John Lee",
+    role: "Graphic Designer",
+    company: "Pace Creative",
+    linkedin: "https://www.linkedin.com/in/johnldesign/",
+    photo: "/testimonials/john.jpeg",
+  },
+  {
+    quote:
+      "He is highly skilled in PHP, HTML and has consistently developed *high-quality, front and back-end web and application solutions* for the team. He is also a good listener and always being patient and helpful to the UX designers.",
+    name: "Lok Law",
+    role: "UX Designer",
+    company: "Pace Creative",
+    linkedin: "https://www.linkedin.com/in/lok-law/",
+    photo: "/testimonials/lok.jpeg",
+  },
 ];
 
 export const techStack: { category: string; items: string[] }[] = [

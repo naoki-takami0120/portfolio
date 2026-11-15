@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-/* Fonts are loaded with next/font in layout.tsx and exposed as CSS variables. */
+/* System fonts only: no web fonts are downloaded. */
 @theme inline {
-  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: Georgia, serif;
+  --font-display: system-ui, sans-serif;
+  --font-serif: system-ui, Georgia, serif;
 }
 
 /* "Burrard fog" palette */
