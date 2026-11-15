@@ -1,21 +1,21 @@
 # Build Log — With vs. Without Claude Code Skills
 
-This portfolio was built three times from the same resume and the same section spec,
-to measure what Claude Code **Skills** add to AI-assisted frontend work.
+This portfolio was built in four steps from the same resume and the same section spec,
+to measure what Claude Code **Skills** add to AI-assisted frontend work, and where a human still has to step in.
 
-| | v0 — Baseline | v1 — Public skills | v2 — + Custom skill |
-|---|---|---|---|
-| Git ref | tag `v0-baseline` | branch `v1-public-skills` | branch `v2-custom-skill` |
-| Tool | Claude (cloud agent) | Claude Code Desktop | Claude Code Desktop |
-| Skills used | none | frontend-design, baseline-ui, fixing-accessibility, web-design-guidelines | v1 + `design-review` (my own, with Playwright MCP) |
-| Prompt | below | `docs/SKILL_PROMPT.md` | `docs/SKILL_PROMPT.md` |
-| Wall-clock time | **~3 min** (161 s, scaffold → passing build) | **~8 min** (17:55:48 → 18:03:22, 4 passes + build/lint) | **~9 min** (13:00:23 → 13:09, review → fix → re-review + build/lint) |
-| Human interventions | 0 | 0 | 0 |
-| Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | 2 in `src/` (+ this log, 2 screenshots, review shots + reports) |
-| Guideline findings (web-design-guidelines) | — | **17** found / **14** fixed | — |
-| Design-review issues (before → after) | — | — | **12** (1 Must / 7 Should / 4 Nice) → **4** (0 / 0 / 4 Nice) |
-| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | 71 / 100 / 100 / 100 (unchanged: design-review checks what is rendered, not load speed) |
-| Horizontal scroll at 390px | yes | no | no (measured: `scrollWidth` 390 = `innerWidth` 390) |
+| | v0 — Baseline | v1 — Public skills | v2 — + Custom skill | v3 — Manual perf fix |
+|---|---|---|---|---|
+| Git ref | tag `v0-baseline` | branch `v1-public-skills` | branch `v2-custom-skill` | `v3-manual-perf` (merged to `main`) |
+| Tool | Claude (cloud agent) | Claude Code Desktop | Claude Code Desktop | Me, by hand (design-review v2.1 to verify) |
+| Skills used | none | frontend-design, baseline-ui, fixing-accessibility, web-design-guidelines | v1 + `design-review` (my own, with Playwright MCP) | design-review v2.1 (measure only) |
+| Prompt | below | `docs/SKILL_PROMPT.md` | `docs/SKILL_PROMPT.md` | — |
+| Wall-clock time | **~3 min** (161 s, scaffold → passing build) | **~8 min** (17:55:48 → 18:03:22, 4 passes + build/lint) | **~9 min** (13:00:23 → 13:09, review → fix → re-review + build/lint) | ~50 min (incl. reading the `next/font` docs, 2 attempts) |
+| Human interventions | 0 | 0 | 0 | all changes by hand |
+| Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | 2 in `src/` (+ this log, 2 screenshots, review shots + reports) | 2 (`layout.tsx`, `globals.css`) |
+| Guideline findings (web-design-guidelines) | — | **17** found / **14** fixed | — | — |
+| Design-review issues (before → after) | — | — | **12** (1 Must / 7 Should / 4 Nice) → **4** (0 / 0 / 4 Nice) | first-visit CLS **0.216 → 0** (slow 4G) |
+| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | 71 / 100 / 100 / 100 (unchanged: design-review checks what is rendered, not load speed) | **99** / 100 / 100 / 100 |
+| Horizontal scroll at 390px | yes | no | no (measured: `scrollWidth` 390 = `innerWidth` 390) | no |
 
 ## v0 — Baseline
 
@@ -72,7 +72,7 @@ Screenshots: `docs/screenshots/v0-desktop.png`, `docs/screenshots/v0-mobile.png`
 Line numbers refer to the file as audited (before the pass-4 fixes).
 
 | # | Location | Finding | Status |
-|---|---|---|---|
+|---|---|---|---|---|
 | 1 | `src/app/page.tsx:21` | Section anchors lack `scroll-margin-top` | fixed (`scroll-mt-6`) |
 | 2 | `src/app/page.tsx:39` | Skip link revealed with `:focus` instead of `:focus-visible` | fixed |
 | 3 | `src/app/page.tsx:41` | "Skip to content" not Title Case | fixed |
@@ -233,4 +233,21 @@ Screenshots: `docs/screenshots/review/after-*.png`
 
 ## Takeaways
 
-_TODO — 3 bullets max. e.g. "Public skills cost +N min and fixed X a11y issues; my own review skill caught Y layout bugs they missed."_
+- **Public skills improved design and accessibility fast, but nobody checked speed.** In ~8 min with no input they gave the site an identity and took Accessibility from 95 to 100. Their web fonts also cost 11 Performance points (82 → 71), and none of the four skills measured load performance.
+- **My own skill caught what code-level rules can't see.** design-review looks at the rendered page in a real browser. It found 12 issues the public skills missed, including a skip link that v1 had "fixed" in a way that broke it. Later it measured a 0.216 layout shift that local Lighthouse reported as 0.
+- **Measuring, then judging, was my part.** Lighthouse alone pointed to the wrong fix. Real-network measurement plus thinking about who actually visits (first-time recruiters) led to a simpler answer: one web font plus Georgia. Performance went from 71 to 99 with no layout shift.
+
+## v4 — Personal adjustments (not part of the experiment)
+
+- **Branch:** `v4-personal-style`. These are my own preference changes, made after the experiment, so the takeaways above do not cover them.
+- **Projects:** the list is now a card grid with 1 column on mobile, 2 at `md` and 3 at `lg`.
+  Each card has a 16:10 image area (the `image` field, or a neutral placeholder), then the title, subtitle, description and skill tags.
+  The "TODO" draft filter is unchanged.
+- **What I Can Do:** each service has a decorative lucide-react line icon, stored as `icon` in `src/data/profile.ts`.
+- **Contact:** added Email (lucide), LinkedIn and GitHub icons, and the link text is now `text-base`.
+  lucide-react 1.x has no brand icons, so the LinkedIn and GitHub icons are inline SVGs from Simple Icons (CC0) in `src/components/BrandIcons.tsx`.
+  LinkedIn was removed from Simple Icons after v10, so its path comes from `simple-icons@10.4.0`.
+- **New dependency:** `lucide-react`. No web fonts were added.
+- **Checks:** `npm run build` and `npm run lint` pass.
+- **design-review (report only):** 0 Must / 1 Should / 4 Nice. The Should-fix is the empty image placeholders: no project has a screenshot yet.
+  Report: `docs/screenshots/review/report-v4.md`.
