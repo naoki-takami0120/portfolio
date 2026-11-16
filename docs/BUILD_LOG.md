@@ -3,7 +3,7 @@
 This portfolio was built in four steps from the same resume and the same section spec,
 to measure what Claude Code **Skills** add to AI-assisted frontend work, and where a human still has to step in.
 
-| | v0 — Baseline | v1 — Public skills | v2 — + Custom skill | v3 — Manual perf fix |
+| | v0 — Baseline | v1 — Public skills | v2 — + Custom skill | v3 — Manual font fix |
 |---|---|---|---|---|
 | Git ref | tag `v0-baseline` | branch `v1-public-skills` | branch `v2-custom-skill` | `v3-manual-perf` (merged to `main`) |
 | Tool | Claude (cloud agent) | Claude Code Desktop | Claude Code Desktop | Me, by hand (design-review v2.1 to verify) |
@@ -14,8 +14,12 @@ to measure what Claude Code **Skills** add to AI-assisted frontend work, and whe
 | Files changed | 4 | 4 in `src/` (+ this log, 2 screenshots) | 2 in `src/` (+ this log, 2 screenshots, review shots + reports) | 2 (`layout.tsx`, `globals.css`) |
 | Guideline findings (web-design-guidelines) | — | **17** found / **14** fixed | — | — |
 | Design-review issues (before → after) | — | — | **12** (1 Must / 7 Should / 4 Nice) → **4** (0 / 0 / 4 Nice) | first-visit CLS **0.216 → 0** (slow 4G) |
-| Lighthouse mobile (Perf / A11y / BP / SEO) | 82 / 95 / 100 / 100 | **71** / **100** / 100 / 100 | 71 / 100 / 100 / 100 (unchanged: design-review checks what is rendered, not load speed) | **99** / 100 / 100 / 100 |
+| Lighthouse mobile (Perf / A11y)¹ | 100 / 95 | 100 / **100** | 100 / 100 | 100 / 100 |
+| Preloaded web-font files | 0 (system fonts) | **3 (~340 KB)** | 3 (~340 KB) | **1 (~90 KB)** |
 | Horizontal scroll at 390px | yes | no | no (measured: `scrollWidth` 390 = `innerWidth` 390) | no |
+
+¹ Lighthouse CLI on a production build (`next build && next start`), fresh headless Chrome with no extensions, mobile, median of 3 runs.
+On localhost every version scores 100 for Performance, so the score can't tell these versions apart. Font downloads and real-network layout shift (measured by design-review) are what differ, so those are the numbers this log relies on.
 
 ## v0 — Baseline
 
@@ -94,11 +98,10 @@ Line numbers refer to the file as audited (before the pass-4 fixes).
 ### Notes
 - Skill tension: frontend-design asked for sentence-case headings, and web-design-guidelines then flagged them (Title Case rule). The later pass won, which matches the section names in the brief.
 - Mobile check: headless Chrome can't go below 500px wide, so the 390px screenshot was rendered through a 390px iframe. No horizontal scroll was visible. That is a visual check, not a measured `scrollWidth`.
-- **Lighthouse (mobile, production build, incognito):** v0 82/95/100/100 → v1 71/100/100/100.
-  Accessibility +5, but Performance −11. Likely cause: the two web fonts chosen by frontend-design
-  (variable Archivo with a `wdth` axis + Source Serif 4 with `opsz` and italics). Three font files,
-  ~340 KB in total, are preloaded and delay the LCP headline on Lighthouse's throttled mobile profile.
-  v0 used system fonts. None of the four skills checked load performance.
+- **Lighthouse:** Accessibility 95 → 100; Performance stays at 100 on localhost.
+  But the new design now preloads three web-font files (~340 KB): variable Archivo with a `wdth` axis for headings,
+  and Source Serif 4 (regular + italic) for body text. v0 used system fonts and downloaded none.
+  None of the four skills looked at what the page downloads.
 - The 390px screenshot artifact (cut-off left edge, magenta area) comes from the iframe workaround.
   Checked by hand in Chrome DevTools (iPhone size): no horizontal scroll.
 - Still TODO by hand: real testimonials, and project 3 + screenshots in `profile.ts`.
@@ -204,13 +207,12 @@ Screenshots: `docs/screenshots/review/after-*.png`
 
 - **Branch:** `v3-manual-perf` (on top of v2). Change made by hand after reading the Next.js 16 `next/font` docs.
 - **Diagnosis:** v1/v2 preloaded three font files (~340 KB): Archivo (headings) plus Source Serif 4 regular + italic (body).
-  On Lighthouse's throttled mobile profile this delayed the first render. The Next.js docs also advise using
+  That is a lot to download before the first render on a slow phone. The Next.js docs also advise using
   multiple fonts conservatively, since each one is an extra download.
 - **Change:** `preload: false` on `Source_Serif_4` in `src/app/layout.tsx`. One line.
   The heading font stays preloaded because the LCP element is the hero headline.
   Body text renders in the fallback font first and swaps in (`display: 'swap'` is the default), so text is never hidden.
-- **Result:** preloaded fonts 3 → 1 (~340 KB → ~90 KB). Lighthouse mobile Performance **71 → 87**
-  (3 runs: 87 / 88 / 87, median 87). A11y / BP / SEO unchanged at 100.
+- **Result:** preloaded fonts 3 → 1 (~340 KB → ~90 KB).
 - **design-review v2.1:** added "wait for `document.fonts.ready`" and fold/close-up screenshots, based on the v2 run's own notes.
 
 - **design-review v2.1 run (report only, after the font change):** 0 Must / 1 Should / 5 Nice.
@@ -220,22 +222,22 @@ Screenshots: `docs/screenshots/review/after-*.png`
   Neither the Lighthouse score alone nor my visual check flagged this; the skill measured it.
   Screenshots: `docs/screenshots/review/mobile-390-hero-fallback-fonts.png` vs `mobile-390-hero-webfonts.png`.
 
-- **Fix attempt 1: `display: "optional"` on both fonts.** Lighthouse didn't change (its simulated throttling
-  loads fonts instantly from localhost, so the swap never happens there; it reported CLS 0 all along).
+- **Fix attempt 1: `display: "optional"` on both fonts.** Local Lighthouse can't show this problem: from localhost the fonts
+  arrive instantly, so the swap never happens and it reports CLS 0 for every version.
   Re-checked with design-review under real slow-4G throttling: first-visit CLS **0.216 → 0** (3/3 runs).
   But the review found a new problem: with `preload: false` + `optional`, the body font missed its ~100 ms window
   even on a fast connection, so **first-time visitors never saw Source Serif 4**, and most portfolio visitors are first-time visitors.
 - **Fix attempt 2 (final): drop Source Serif 4 and use Georgia for body text.** It looks the same on every visit,
   downloads nothing for body text, and the expanded Archivo headline keeps the visual identity
   (preloaded, `display: "optional"`, so no layout shift).
-- **Final result:** Lighthouse mobile Performance **71 → 99**, A11y / BP / SEO 100. Preloaded fonts 3 → 1.
-  First-visit CLS 0 on slow 4G (measured by design-review).
+- **Final result:** preloaded fonts 3 → 1 (~340 KB → ~90 KB), first-visit CLS **0.216 → 0** on slow 4G (measured by design-review).
+  Lighthouse mobile stays at 100 / 100 (Performance / Accessibility).
 
 ## Takeaways
 
-- **Public skills improved design and accessibility fast, but nobody checked speed.** In ~8 min with no input they gave the site an identity and took Accessibility from 95 to 100. Their web fonts also cost 11 Performance points (82 → 71), and none of the four skills measured load performance.
-- **My own skill caught what code-level rules can't see.** design-review looks at the rendered page in a real browser. It found 12 issues the public skills missed, including a skip link that v1 had "fixed" in a way that broke it. Later it measured a 0.216 layout shift that local Lighthouse reported as 0.
-- **Measuring, then judging, was my part.** Lighthouse alone pointed to the wrong fix. Real-network measurement plus thinking about who actually visits (first-time recruiters) led to a simpler answer: one web font plus Georgia. Performance went from 71 to 99 with no layout shift.
+- **Public skills improved design and accessibility fast, but nobody looked at what the page downloads.** In ~8 min with no input they gave the site an identity and took Accessibility from 95 to 100. They also added three preloaded web-font files (~340 KB), and none of the four skills noticed.
+- **My own skill caught what code-level rules can't see.** design-review looks at the rendered page in a real browser. It found 12 issues the public skills missed, including a skip link that v1 had "fixed" in a way that broke it. Later it measured a 0.216 layout shift on a slow first visit that local Lighthouse reported as 0.
+- **Measuring under real conditions was my part.** Local Lighthouse scored every version 100, so it couldn't guide the decision. Real-network measurement, plus thinking about who actually visits (first-time recruiters), led to a simple answer: one web font plus Georgia. Preloaded fonts went from 3 to 1 and the first-visit layout shift from 0.216 to 0.
 
 ## v4 — Personal adjustments (not part of the experiment)
 
@@ -247,7 +249,9 @@ Screenshots: `docs/screenshots/review/after-*.png`
 - **Contact:** added Email (lucide), LinkedIn and GitHub icons, and the link text is now `text-base`.
   lucide-react 1.x has no brand icons, so the LinkedIn and GitHub icons are inline SVGs from Simple Icons (CC0) in `src/components/BrandIcons.tsx`.
   LinkedIn was removed from Simple Icons after v10, so its path comes from `simple-icons@10.4.0`.
-- **New dependency:** `lucide-react`. No web fonts were added.
+- **Fonts:** headings and body now use system fonts (`system-ui`), so the site downloads no web fonts at all (preloaded fonts 1 → 0).
+- **New dependency:** `lucide-react`.
+- **Lighthouse¹:** 98 / 100 (Performance / Accessibility). LCP is 2.4 s vs 0.8 s in v3, likely from the new project and testimonial images; not investigated yet.
 - **Checks:** `npm run build` and `npm run lint` pass.
 - **design-review (report only):** 0 Must / 1 Should / 4 Nice. The Should-fix is the empty image placeholders: no project has a screenshot yet.
   Report: `docs/screenshots/review/report-v4.md`.
